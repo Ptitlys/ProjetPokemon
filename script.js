@@ -95,10 +95,6 @@ class Type{
            
         }
     }
-
-    getType(){
-        return this.type
-    }
     
 }
 
