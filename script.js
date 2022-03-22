@@ -18,8 +18,15 @@ class Pokemon{
         } 
     }
 
+    static getType(){
+        for(var key in Type.all_types){
+            var value = Type.all_types[key];
+            document.write(value);
+        }
+    }
+
     toString(){
-        return " Pokemon numero: " + this.id + " nom: " + this.pokemon_name + " attaque de base: " + this.base_attack + " defense de base: " + this.base_defense + " stamina de base: " + this.base_stamina + "type: " + this.type1 + ", " + this.type2 + "</br>";
+        return " Pokemon numero: " + this.id + " nom: " + this.pokemon_name + " attaque de base: " + this.base_attack + " defense de base: " + this.base_defense + " stamina de base: " + this.base_stamina + "</br>" + this.type1 + ", " + this.type2 + "</br>";
     }
 
     static import_pokemon(){
@@ -28,17 +35,18 @@ class Pokemon{
             tab_type=[];
             if(pokemons[i]['form'] == "Normal"){
 
-                    //chercher le type pour l'attribué
-                    for(let j = 0; j < pokemon_type.length; j++){
-                        if(pokemon_type[j]["pokemon_id"] == pokemons[i]["pokemon_id"] && pokemon_type[j]["form"] == "Normal"){
-                            for(let k = 0; k < pokemon_type[j]["type"].length; k++){
-                                tab_type = Type.all_types[pokemon_type[j]["type"][k]];
+                    //chercher le type pour l'attribuer
+                        if(pokemon_type[i]["pokemon_id"] == pokemons[i]["pokemon_id"] && pokemon_type[i]["form"] == "Normal"){
+                            tab_type = pokemon_type[i]["type"];
+
+                            //Ajout objet Type aux tableau type d'un pokemon
+                            for(let k = 0; k < tab_type.length; k++){
+                                tab_type[k] = Type.all_types[tab_type[k]];
                             }
                         }
-                    }
+                    
+                    //creer le pokemon
                     let pokemon = new Pokemon(pokemons[i],tab_type);
-                    //let typePoke = pokemon_type[i];
-                    //document.write(typePoke);
                     this.all_pokemons[pokemons[i]['pokemon_id']] = pokemon;
             }  
         }
@@ -75,7 +83,7 @@ class Type{
     }
 
     toString(){
-        return "Type du pokémon: " + this.type + "Coefficients selon le type : </br>" + "Insecte: " + this.bug + "</br>Ténèbre: " + this.dark + "</br>Dragon: " + this.dragon +"</br>Electricité: " + this.electric + "</br>Fée: " + this.fairy + "</br>Combat: " + this.fighting + "</br>Feu: " + this.fire + "</br>Vol: " + this.flying + "</br>Spectre: " + this.ghost + "</br>nPlante: " + this.grass +"</br>Sol: "+ this.ground + "</br>Glace: " + this.ice + "</br>Normal: " + this.normal + "</br>Poison: " + this.poison + "</br>Psy: " + this.psychic + "</br>Roche: " + this.rock + "</br>Acier: " + this.steel + "\nEau: " + this.water ;
+        return "Type du pokémon: " + this.type + " Coefficients selon le type : </br>" + "Insecte: " + this.bug + "</br>Ténèbre: " + this.dark + "</br>Dragon: " + this.dragon +"</br>Electricité: " + this.electric + "</br>Fée: " + this.fairy + "</br>Combat: " + this.fighting + "</br>Feu: " + this.fire + "</br>Vol: " + this.flying + "</br>Spectre: " + this.ghost + "</br>Plante: " + this.grass +"</br>Sol: "+ this.ground + "</br>Glace: " + this.ice + "</br>Normal: " + this.normal + "</br>Poison: " + this.poison + "</br>Psy: " + this.psychic + "</br>Roche: " + this.rock + "</br>Acier: " + this.steel + "</br>Eau: " + this.water + "</br>";
         
     }
 
@@ -97,9 +105,9 @@ class Type{
 Type.import_type();
 Pokemon.import_pokemon();
 
-//console.log(Pokemon.all_pokemons);
-document.write(Type.all_types);
-console.log(Type.all_types);
+//document.write(Pokemon.all_pokemons);
+Pokemon.getType();
+
 
 
 
