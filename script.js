@@ -23,16 +23,38 @@ class Pokemon{
     static getType(){
         for(var key in Type.all_types){
             var value = Type.all_types[key];
-            document.write(value);
         }
     }
 
     toString(){
         return " Pokemon numero: " + this.id + " nom: " + this.pokemon_name + " attaque de base: " + this.base_attack + " defense de base: " + this.base_defense + " stamina de base: " + this.base_stamina + "</br>" + this.type1 + ", " + this.type2 + "</br>";
     }
-
+    //On recherche si l'attaque est déjà dans le tableau all_moves
+    static moveTrouve(move){
+        let trouve = false;
+        Attack.all_moves.forEach(moveCourant =>{
+            if(moveCourant["name"] == move["name"]) trouve = true;
+        });
+        return trouve
+    }
+    
     static import_pokemon(){
         let tab_type = [];
+        let tab_moves = [];
+        //Importer toutes les charged moves et les mettre dans le tableau all_moves
+        for(let j=0;j<charged_moves.length;j++){
+            let moveCourant = charged_moves[j];
+            let monAtt = new Attack(moveCourant);
+            if(!this.moveTrouve(monAtt)) Attack.all_moves.push(monAtt); 
+        }
+
+        //Importer tous les fast moves et les mettre dans le tableau all_moves
+        for(let j=0;j<fast_moves.length;j++){
+            let moveCourant = fast_moves[j];
+            let monAtt = new Attack(moveCourant);
+            if(!this.moveTrouve(monAtt)) Attack.all_moves.push(monAtt);
+        }
+        
         for (let i = 0; i < pokemons.length; i++) {
             tab_type=[];
             if(pokemons[i]['form'] == "Normal"){
@@ -47,96 +69,14 @@ class Pokemon{
                             }
                         }
 
-                    //chercher les attaques pour les attribuer
-                    if(pokemon_moves[i]["pokemon_id"] == pokemons[i]["pokemon_id"] && pokemon_moves[i]["form"] == "Normal"){
-                        let tab_charged_moves_names = pokemon_moves[i]["charged_moves"];
-                        let tab_fast_moves_names = pokemon_moves[i]["fast_moves"];
-
-                        //initialisation tab moves
-                        let tab_charged_moves = [];
-                        let tab_fast_moves = [];
-
-                        //attribution moves dans tab
-                        for(let k = 0; k < charged_moves.length; k++){
-                            for(let j = 0; j < tab_charged_moves_names.length; j++){
-                                if(charged_moves[k]["name"] == tab_charged_moves_names[j]){
-                                    tab_charged_moves[charged_moves[k]["move_id"]] = charged_moves[k];
-                                }
-                            }
-                        }
-
-                        for(let k = 0; k < fast_moves.length; k++){
-                            for(let j = 0; j < tab_fast_moves_names.length; j++){
-                                if(fast_moves[k]["name"] == tab_fast_moves_names[j]){
-                                    tab_fast_moves[charged_moves[k]["move_id"]] = fast_moves[k];
-                                }
-                            }
-                        }
-
-                        console.log(tab_fast_moves);
-
-                        //verification de presence de l'attaque chargée dans all_attacks
-                        let present = 0;
-                        let attaque;
-                        for(let j = 0; j < tab_charged_moves.length; j++){
-                            for(let k = 0; k <= Attack.all_attacks.length; k++){
-                                if(Attack.all_attacks.length == 0){
-                                    attaque = new Attack(tab_charged_moves[j]);
-                                    Attack.all_attacks[] = attaque; 
-                                    console.log(attaque);
-                                }
-                                console.log(Attack.all_attacks[k]);
-                                if(Attack.all_attacks[k].getName() == tab_charged_moves[j]["move_id"]){
-                                    present = 1;
-                                    console.log("rpt");
-                                }
-                            }
-                               
-                            
-                            if(present != 1){
-                                Attack.all_attacks.push(new Attack(tab_charged_moves[j])); 
-                            }
-                        }
-
-                        //verification de presence de l'attaque rapide dans all_attacks
-                        present = 0;
-                        for(let j = 0; j < tab_fast_moves.length; j++){
-                            for(let k = 0; k < Attack.all_attacks.length; k++){
-                                if(Attack.all_attacks[k].getName == tab_fast_moves[j]["move_id"]){
-                                    present = 1;
-                                }
-                            }
-                            if(present != 1){
-                                Attack.all_attacks.push(new Attack(tab_fast_moves[j]));
-                                
-                            }
-                        }
-
-                        let tab_moves = [];
-                        console.log(tab_charged_moves);
-                        console.log(tab_fast_moves);
-                        //ajout attaques chargées
-                        for(let j = 0; j < tab_charged_moves.length; j++){
-                            tab_moves.push(tab_charged_moves[j]);
-                        }
-                        console.log(tab_moves);
-                        //ajout attaques rapides
-                        for(let j = 0; j < tab_fast_moves.length + tab_charged_moves.length; j++){
-                            tab_moves.push(tab_fast_moves[j]);
-                        }
-                        
-                    }
-
-                    //creer le pokemon
+                    
+                    
+                    //Creer le pokemon
                     let pokemon = new Pokemon(pokemons[i],tab_type,tab_moves);
-                    this.all_pokemons[pokemons[i]['pokemon_id']] = pokemon;
-            
+                    this.all_pokemons[pokemons[i]['pokemon_id']] = pokemon;   
             }  
         }
     }
-
-
-
 }
 
 class Type{
@@ -175,45 +115,28 @@ class Type{
         for (let i = 0; i < Object.keys(type_effectiveness).length; i++) {
             let new_type = new Type(keys[i], type_effectiveness);
             this.all_types[keys[i]] = new_type;   
-           
         }
     }
     
 }
 
 class Attack{
-    static all_attacks = [];
+    static all_moves = [];
 
-    constructor(tab){
-        this.name = tab["name"];
-        this.id = tab["move_id"];
-        
-        this.duration = tab["duration"];
-        this.power = tab["power"];
-        this.stamina_scaler = tab["stamina_loss_scaler"];
-        this.type = tab["type"];
-
-        if(tab["critical_chance"] != null){
-            this.crit = tab["critical_chance"];
-        }  
-    }
-
-    getName(){
-        return this.name;
+   
+    constructor(move){
+        this.name = move["name"];
+        this.move_id = move["move_id"];
+        this.critical_chance = move["critical_chance"];
+        this.duration = move["duration"];
+        this.energy_delta = move["energy_delta"];
+        this.power = move["power"];
+        this.stamina_loss_scaler= move["stamina_loss_scaler"];
+        this.type = move["type"];
     }
 
     toString(){
-        return "Attaque " + this.name + " Id: " + this.id + " chance de critique: " + this.critical_chance + " durée: " + this.duration + "puissance: " + this.power + " scaler de perte de vie: " + this.stamina_scaler + " type: " + this.Type + "</br>";
+        return "<br>Nom : "+this.name+"<br>ID : "+this.move_id+"<br>Critical chance : "+this.critical_chance+"<br>Duration : "+this.duration+"<br>Energy delta : "+this.energy_delta+"<br>Power : "+this.power+"<br>Stamina loss scaler : "+this.stamina_loss_scaler+"<br>Type : "+this.type+"<br>";
     }
 }
-
-Type.import_type();
 Pokemon.import_pokemon();
-
-document.write(Pokemon.all_pokemons);
-document.write(Attack.all_attacks);
-//Pokemon.getType();
-
-
-
-
