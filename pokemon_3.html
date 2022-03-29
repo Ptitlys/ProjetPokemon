@@ -119,12 +119,13 @@
                 let menu = document.createElement("ul");
                 let option = document.createElement("li");
                 option.textContent = "details";
-                menu.style = "display:none; position:relative; z-index:2; top: -10px;";
+                menu.style = "display:none; position:relative; z-index:2; ;";
                 menu.appendChild(option);
 
                 row.appendChild(menu);
                 row.addEventListener('mouseover',function(){show_menu(menu);}, true);
                 row.addEventListener('mouseout',function(){hide_menu(menu);}, true);
+                menu.addEventListener('click',detail,true);
                
                 }else{
                 let row=document.createElement("tr");
@@ -162,15 +163,14 @@
                 row.appendChild(tdDef); 
                 row.appendChild(tdImage); 
                 tab_body.appendChild(row); 
-
-                row_pokemon = row;
-                row_pokemon.appendChild(menu);
-                row_pokemon.addEventListener('mouseover',show_menu, true);
-                row_pokemon.addEventListener('mouseout',hide_menu, true);
                 }
 
                
             }
+            function detail(){
+                alert("prout");
+            }
+
             function show_menu(menu){
             menu.style = "display:block; position:relative; z-index:2; top: -10px;";
             }
