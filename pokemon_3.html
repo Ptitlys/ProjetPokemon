@@ -27,6 +27,7 @@
             let footer;
             let row_pokemon;
             let body = document.getElementById("corps");
+            let numero_pokemon;
             
 
             function Page(){
@@ -80,6 +81,7 @@
             for(let i = last_number; i <= number; i++){
                 if(Pokemon.all_pokemons[i] != undefined){
                 let row=document.createElement("tr");
+                let numero_pokemon = i;
 
                 let tdId=document.createElement("td");
                 tdId.textContent = Pokemon.all_pokemons[i]["id"];
@@ -115,18 +117,27 @@
                 row.appendChild(tdImage); 
                 tab_body.appendChild(row);
 
-                row_pokemon = row;
                 let menu = document.createElement("ul");
+                menu.style="display: none;";
+
                 let option = document.createElement("li");
-                option.textContent = "details";
-                menu.style = "display:none; position:relative; z-index:2; ;";
+                option.textContent = "Détails";
+                option.style = "list-style-type:none; font-size:1.2em; text-align:center;";
+
+                
                 menu.appendChild(option);
 
                 row.appendChild(menu);
+                //affichage menu survol
                 row.addEventListener('mouseover',function(){show_menu(menu);}, true);
                 row.addEventListener('mouseout',function(){hide_menu(menu);}, true);
-                menu.addEventListener('click',detail,true);
+
+                //affichage detail et image quand click
+                tdImage.addEventListener('click',function(){show_image(numero_pokemon);},true);
+                menu.addEventListener('click',function(){detail(numero_pokemon);},true);
+                
                
+                //si le pokemon n'existe pas alors ligne vide
                 }else{
                 let row=document.createElement("tr");
 
@@ -167,32 +178,135 @@
 
                
             }
-            function detail(){
-                alert("prout");
-            }
 
+            function show_image(numero_pokemon){
+                //affichage image pokemon
+                let div_image = document.createElement("div");
+                div_image.style="position:sticky; float:top; bottom:20%; left:50%; width:30%; z-index:3;"
+                let image_pokemon = document.createElement("img");
+                image_pokemon.src = Pokemon.all_pokemons[numero_pokemon]["image"];
+
+                let button_close = document.createElement("button");
+                button_close.textContent = "Close";
+                button_close.style = "position:absolute; right:10px; top:10px";
+                button_close.addEventListener('click',function(){div_image.remove();}, true);
+
+                div_image.appendChild(image_pokemon);
+                div_image.appendChild(button_close);
+                body.appendChild(div_image);
+            }
+            
+            
+            //afficher menu
             function show_menu(menu){
-            menu.style = "display:block; position:relative; z-index:2; top: -10px;";
+            menu.style = "display:block; position:absolute; left:5%; background-color:grey; padding:0; width:300px; height:30px"
             }
 
+            //cacher menu
             function hide_menu(menu){
-            menu.style = "display:none; position:relative; z-index:2; top: -10px;";
+            menu.style = "display:none; position:absolute; left:10%; background-color:grey; padding:0";
             }
             
             table_page.appendChild(tab_body);
-            body.appendChild(table_page);
             footer_page.textContent = "Page " + page_number;
             body.appendChild(footer_page);
+            body.appendChild(table_page);
+            
 
             table = table_page;
             footer = footer_page; 
-            
-            
         }
 
-        //definition menu
-        
-        
+        function detail(numero_pokemon){
+                //creation du popup
+                let popup = document.createElement("div");
+                popup.style="position:sticky; float:top; bottom:20%; left:50%; width:60%; height:100%; background-color:#EDE7D9; z-index:3;"
+
+                //affichage nom pokemon
+                let titre = document.createElement("h1");
+                titre.textContent = Pokemon.all_pokemons[numero_pokemon]["pokemon_name"];
+
+                //affichage image pokemon
+                let image_pokemon = document.createElement("img");
+                image_pokemon.src = Pokemon.all_pokemons[numero_pokemon]["image"];
+                image_pokemon.style = "width:30%";
+
+                //affichage images types
+                let image_type1 = document.createElement("img");
+                let image_type2 = document.createElement("img");
+
+                image_type1.src = Pokemon.all_pokemons[numero_pokemon]["type1_image"];
+                if(Pokemon.all_pokemons[numero_pokemon]["type2_image"] != ""){
+                    image_type2.src = Pokemon.all_pokemons[numero_pokemon]["type2_image"];
+                }
+                
+                //afficher les attaques chargées
+                let charged_attaque = document.createElement("ul");
+                if(Pokemon.all_pokemons[numero_pokemon]["move_set"]["charged_moves"].length != 0){
+                charged_attaque.textContent = "Attaques chargées";
+                for(let i = 0; i < Pokemon.all_pokemons[numero_pokemon]["move_set"]["charged_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = Pokemon.all_pokemons[numero_pokemon]["move_set"]["charged_moves"][i]["name"];
+                    charged_attaque.appendChild(attaque);
+                }
+                }
+
+                let elite_charged_attaque = document.createElement("ul");
+                //afficher les attaques chargées élites
+                if(Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_charged_moves"].length != 0){
+                elite_charged_attaque.textContent = "Attaques chargées élites";
+                for(let i = 0; i < Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_charged_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_charged_moves"][i]["name"];
+                    elite_charged_attaque.appendChild(attaque);
+                }
+                }
+
+                let elite_fast_attaque = document.createElement("ul");
+                if(Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_fast_moves"].length != 0){
+                //afficher les attaques rapides élites
+                elite_fast_attaque.textContent = "Attaques rapides élites";
+                for(let i = 0; i < Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_fast_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_fast_moves"][i]["name"];
+                    elite_fast_attaque.appendChild(attaque);
+                }
+                }
+
+                let fast_attaque = document.createElement("ul");
+                if(Pokemon.all_pokemons[numero_pokemon]["move_set"]["elite_fast_moves"].length != 0){
+                //afficher les attaques rapides
+                fast_attaque.textContent = "Attaques rapides";
+                for(let i = 0; i < Pokemon.all_pokemons[numero_pokemon]["move_set"]["fast_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = Pokemon.all_pokemons[numero_pokemon]["move_set"]["fast_moves"][i]["name"];
+                    fast_attaque.appendChild(attaque);
+                }
+                }
+
+                //button pour fermer le popup
+                let button_close = document.createElement("button");
+                button_close.textContent = "Close";
+                button_close.style = "position:absolute; right:10px; top:10px";
+                button_close.addEventListener('click',function(){popup.remove();}, true);
+                body.addEventListener('click',function(){popup.remove();}, true);
+
+                popup.appendChild(titre);
+                popup.appendChild(image_type1);
+
+                if(Pokemon.all_pokemons[numero_pokemon]["type2_image"] != ""){
+                    popup.appendChild(image_type2)
+                };
+
+                
+                popup.appendChild(fast_attaque);
+                popup.appendChild(elite_charged_attaque);
+                popup.appendChild(elite_fast_attaque);
+                popup.appendChild(charged_attaque);
+                popup.appendChild(image_pokemon);
+                popup.appendChild(button_close);
+                body.appendChild(popup);
+            }
 
         
         //definition bouton next et back
@@ -214,8 +328,11 @@
         function nextPage(){
                 number += 25;
                 last_number += 25;
-                page_number+=1
+                page_number+=1;
+
+                //reset numero de page
                 footer.remove();
+                //reset table
                 table.remove();
                 Page();      
             }
@@ -224,13 +341,15 @@
                 number -= 25;
                 last_number -= 25;
                 page_number -= 1;
+
+                //reset numero de page
                 footer.remove();
+                //reset table
                 table.remove();
                 Page();       
             }
 
         window.onload=Page();
-        
         </script>
 
     </body>

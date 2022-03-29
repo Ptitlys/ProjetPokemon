@@ -27,11 +27,17 @@ class Pokemon{
         if(tab_type.length == 1){
             this.type1 = tab_type[0];
             this.type2 = "";
+            this.type1_image = "images/"+this.type1["type"]+".png";
+            this.type2_image = "";
         }
         else{
             this.type1 = tab_type[0];
             this.type2 = tab_type[1];
+            this.type1_image = "images/"+this.type1["type"]+".png";
+            this.type2_image = "images/"+this.type2["type"]+".png";
         }
+
+        
         
         this.move_set = tab_moves;
     }
@@ -83,6 +89,10 @@ class Pokemon{
         
         for (let i = 0; i < pokemons.length; i++) {
             tab_moves = [];
+            tab_moves["charged_moves"] = [];
+            tab_moves["fast_moves"] = [];
+            tab_moves["elite_charged_moves"] = [];
+            tab_moves["elite_fast_moves"] = [];
             tab_moves_name = [];
             tab_type=[];
             let generation = "";
@@ -113,31 +123,67 @@ class Pokemon{
                             if(pokemons[i]["pokemon_id"] == pokemon_moves[j]["pokemon_id"] && pokemon_moves[j]["form"] == "Normal" ){
                                 tab_moves_name["charged_moves"] = pokemon_moves[j]["charged_moves"];
                                 tab_moves_name["fast_moves"] = pokemon_moves[j]["fast_moves"];
+                                
+                                if(pokemon_moves[j]["elite_charged_moves"] != ""){tab_moves_name["elite_charged_moves"] = pokemon_moves[j]["elite_charged_moves"];}else{
+                                    tab_moves_name["elite_charged_moves"] = "";
+                                }
+
+                                if(pokemon_moves[j]["elite_fast_moves"] != ""){
+                                tab_moves_name["elite_fast_moves"] = pokemon_moves[j]["elite_fast_moves"];}else{tab_moves_name["elite_fast_moves"] = "";}
                             }
                         }
 
+                        //attaques chargées
                         for(let k = 0; k < tab_moves_name["charged_moves"].length; k++){
                             for(let j = 0; j < charged_moves.length; j++){
                                 if(charged_moves[j]["name"] == tab_moves_name["charged_moves"][k]){
-                                    tab_moves.push(charged_moves[j]);
+                                    tab_moves["charged_moves"][k] = charged_moves[j];
                                 }
                             }
                         }
 
+                        //attaques chargées élite
+                        if(tab_moves_name["elite_charged_moves"] != ""){
+                        for(let k = 0; k < tab_moves_name["elite_charged_moves"].length; k++){
+                            for(let j = 0; j < charged_moves.length; j++){
+                                if(charged_moves[j]["name"] == tab_moves_name["elite_charged_moves"][k]){
+                                    tab_moves["elite_charged_moves"][k] = charged_moves[j];
+                                }
+                            }
+                        }
+                        }else{
+                            tab_moves["elite_charged_moves"]="";
+                        }
+
+                        //attaques rapides
                         for(let k = 0; k < tab_moves_name["fast_moves"].length; k++){
                             for(let l = 0; l < fast_moves.length; l++){
                                 if(fast_moves[l]["name"] == tab_moves_name["fast_moves"][k]){
-                                    tab_moves.push(fast_moves[l]);
+                                    tab_moves["fast_moves"][k] = fast_moves[l];
                                 }  
                             }
+                        }
+
+                        //attaques rapides élites
+                        if(tab_moves_name["elite_fast_moves"] != ""){
+                        for(let k = 0; k < tab_moves_name["elite_fast_moves"].length; k++){
+                            for(let l = 0; l < fast_moves.length; l++){
+                                if(fast_moves[l]["name"] == tab_moves_name["elite_fast_moves"][k]){
+                                    tab_moves["elite_fast_moves"][k] = fast_moves[l];
+                                }  
+                            }
+                        }
+                        }else{
+                            tab_moves["elite_fast_moves"]="";
                         }
                         
                     //Creer le pokemon
                     let pokemon = new Pokemon(pokemons[i],tab_type,tab_moves,generation);
                     this.all_pokemons[pokemons[i]['pokemon_id']] = pokemon;   
+                }
             }  
         }
-    }
+    
 }
 
 class Type{
@@ -223,6 +269,8 @@ class Attack{
             let monAtt = new Attack(moveCourant);
             if(!Attack.moveTrouve(monAtt)) Attack.all_moves.push(monAtt);
         }
+
+        
     }
 
     getType(){
