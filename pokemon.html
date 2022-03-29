@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pokemons</title>
+        <meta charset="utf-8">
+    </head>
+    
+    <body id="corps">
+        <h1>Les Pokémons</h1>
+
+        <script src="pokemon.js"></script>
+        <script src="pokemon_type.js"></script>
+        <script src="type_effectiveness.js"></script>
+        <script src="fast_moves.js"></script>
+        <script src="charged_moves.js"></script>
+        <script src="pokemon_moves.js"></script>
+        <script src="generation.js"></script>
+        <script src="script.js"></script>
+
+        <script>
+            let body = document.getElementById("corps");
+            let table = document.createElement("table");
+            
+            let header = document.createElement("thead");
+            let tab_body = document.createElement("tbody");
+
+            let rowHeader = document.createElement("tr");
+            
+            let tdIdHeader = document.createElement("th");
+            tdIdHeader.textContent = "ID";
+            let tdNomHeader = document.createElement("th");
+            tdNomHeader.textContent = "Nom";
+            let tdGenHeader = document.createElement("th");
+            tdGenHeader.textContent = "Generation";
+            let tdEndHeader=document.createElement("th");
+            tdEndHeader.textContent = "Stamina";
+            let tdAtkHeader=document.createElement("th");
+            tdAtkHeader.textContent = "Attaque";
+            let tdDefHeader=document.createElement("th");
+            tdDefHeader.textContent = "Defense";
+            let tdImageHeader=document.createElement("th");
+            tdImageHeader.textContent = "Image";
+
+            rowHeader.appendChild(tdIdHeader); 
+            rowHeader.appendChild(tdNomHeader); 
+            rowHeader.appendChild(tdGenHeader);
+            rowHeader.appendChild(tdEndHeader);  
+            rowHeader.appendChild(tdAtkHeader); 
+            rowHeader.appendChild(tdDefHeader); 
+            rowHeader.appendChild(tdImageHeader); 
+            header.appendChild(rowHeader);
+            table.appendChild(header);
+
+            
+            Pokemon.all_pokemons.forEach(pokemon => {
+                let row=document.createElement("tr");
+
+                let tdId=document.createElement("td");
+                tdId.textContent = pokemon["id"];
+
+                let tdNom=document.createElement("td");
+                tdNom.textContent = pokemon["pokemon_name"];
+
+                let tdGen=document.createElement("td");
+                tdGen.textContent = pokemon["generation"];
+
+                let tdEnd=document.createElement("td");
+                tdEnd.textContent = pokemon["base_stamina"];
+
+                let tdAtk=document.createElement("td");
+                tdAtk.textContent = pokemon["base_attack"];
+
+                let tdDef=document.createElement("td");
+                tdDef.textContent = pokemon["base_defense"];
+
+                let tdImage=document.createElement("td");
+                let image = document.createElement("img");
+
+                image.src = pokemon["miniature"];
+
+                tdImage.appendChild(image);
+
+                row.appendChild(tdId); 
+                row.appendChild(tdNom); 
+                row.appendChild(tdGen);
+                row.appendChild(tdEnd);  
+                row.appendChild(tdAtk); 
+                row.appendChild(tdDef); 
+                row.appendChild(tdImage); 
+                tab_body.appendChild(row);
+            });
+            table.appendChild(tab_body);
+            body.appendChild(table);
+
+        </script>
+    </body>
+</html>
+
+<style>
+    table,
+    td{
+        border: black solid 2px;
+    }
+
+</style>

@@ -1,12 +1,28 @@
 class Pokemon{
     static all_pokemons = [];
 
-    constructor(tab,tab_type,tab_moves){
+    constructor(tab,tab_type,tab_moves,generation){
         this.base_attack = tab['base_attack'];
         this.base_defense = tab['base_defense'];
         this.base_stamina = tab['base_stamina'];
         this.pokemon_name = tab['pokemon_name'];
         this.id = tab['pokemon_id'];
+        this.generation = generation;
+
+        switch(String(this.id).split('').length){
+            case 1:
+                this.image="https://www.adl-web.fr/pokemon-base/images/00"+tab['pokemon_id']+".png";
+                this.miniature = "https://www.adl-web.fr/pokemon-base/thumbnails/00"+tab['pokemon_id']+".png";
+            break;
+            case 2:
+                this.image="https://www.adl-web.fr/pokemon-base/images/0"+tab['pokemon_id']+".png";
+                this.miniature = "https://www.adl-web.fr/pokemon-base/thumbnails/0"+tab['pokemon_id']+".png";
+            break;
+            case 3:
+                this.image="https://www.adl-web.fr/pokemon-base/images/"+tab['pokemon_id']+".png";
+                this.miniature = "https://www.adl-web.fr/pokemon-base/thumbnails/"+tab['pokemon_id']+".png";
+                break;
+        }
 
         if(tab_type.length == 1){
             this.type1 = tab_type[0];
@@ -28,13 +44,31 @@ class Pokemon{
     }
 
     getAttack(){
-       return this.move_set
+        let tab_move = [];
+        for(let i = 0; i < this.move_set.length; i++){
+           tab_move =  this.move_set[i]["name"];
+        }
+        return tab_move;
+       
+    }
+
+    getVulnerability(type){
+        let coeff;
+        if(this.type2 == ""){
+            coeff = type_effectiveness[type][this.type1["type"]];
+
+        }
+        else{
+            coeff= type_effectiveness[type][this.type1["type"]] * type_effectiveness[type][this.type2["type"]];
+        }
+        return coeff
     }
 
     toString(){
-        return " Pokemon numero: " + this.id + " nom: " + this.pokemon_name + " attaque de base: " + this.base_attack + " defense de base: " + this.base_defense + " stamina de base: " + this.base_stamina + "</br>" + this.type1 + ", " + this.type2 + "</br>";
+        return " Pokemon numero: " + this.id + " nom: " + this.pokemon_name + " attaque de base: " + this.base_attack + " defense de base: " + this.base_defense + " stamina de base: " + this.base_stamina + "</br>" + this.type1 + ", " + this.type2 + "</br> Generation: " + this.generation;
     }
     
+
     
     static import_pokemon(){
         Type.import_type();
@@ -44,13 +78,25 @@ class Pokemon{
         let tab_type = [];
         let tab_moves = [];
         let tab_moves_name = [];
+
+        
         
         for (let i = 0; i < pokemons.length; i++) {
             tab_moves = [];
             tab_moves_name = [];
             tab_type=[];
+            let generation = "";
 
             if(pokemons[i]['form'] == "Normal"){
+
+                //chercher la generation pour l'attribuer
+                Object.keys(pokemon_generation).forEach(tab_generation => {
+                    pokemon_generation[tab_generation].forEach(gen =>{
+                        if(gen["id"] == pokemons[i]["pokemon_id"]){
+                            generation = gen["generation_number"];
+                        }
+                    });
+                });
 
                     //chercher le type pour l'attribuer
                         if(pokemon_type[i]["pokemon_id"] == pokemons[i]["pokemon_id"] && pokemon_type[i]["form"] == "Normal"){
@@ -87,7 +133,7 @@ class Pokemon{
                         }
                         
                     //Creer le pokemon
-                    let pokemon = new Pokemon(pokemons[i],tab_type,tab_moves);
+                    let pokemon = new Pokemon(pokemons[i],tab_type,tab_moves,generation);
                     this.all_pokemons[pokemons[i]['pokemon_id']] = pokemon;   
             }  
         }
@@ -178,6 +224,10 @@ class Attack{
             if(!Attack.moveTrouve(monAtt)) Attack.all_moves.push(monAtt);
         }
     }
+
+    getType(){
+        return this.type;
+    }
 }
 
 function getPokemonsByType(type){
@@ -194,8 +244,98 @@ function getPokemonsByType(type){
 }
 
 function getPokemonsByAttack(attack){
+    let tab_pokemon = [];
+    Pokemon.all_pokemons.forEach(pokemon => {
+        poke_attack = pokemon.getAttack();
+            if(poke_attack == attack){
+                tab_pokemon.push(pokemon);
+            }  
+    });
+    return tab_pokemon;
+}
+
+function getAttackByType(type){
+    let tab_attack = [];
+    Attack.all_moves.forEach(attaque => {
+        if(attaque.getType() == type){
+            tab_attack.push(attaque);
+        }
+    })
+    return tab_attack;
+}
+//On crée les fonctions qui vont permettre de comparer et qui seront utilisés par les trieurs 
+function SortByStamina(x, y){
+    if (x.base_stamina > y.base_stamina) {return -1;}
+    if (x.base_stamina < y.base_stamina) {return  1;}
+    return 0;
+}
+function SortByName(x, y) {
+    if (x.pokemon_name < y.pokemon_name) { return -1; }
+    if (x.pokemon_name > y.pokemon_name) { return 1; }
+    return 0;
+}
+//On crée les fonctions qui vont trier
+function sortPokemonByStamina(){
+    var s = Pokemon.all_pokemons.sort(SortByStamina);
+    console.log(s);
+}
+
+function sortPokemonByName() {
+    var s = Pokemon.all_pokemons.sort(SortByName);
+    console.log(s);
+}
+
+function getWeakestEnnemy(attack){
+    let weakest = [];
+    let weakest_coeff = 0;
     
+    Attack.all_moves.forEach(attaque => {
+        
+        if(attaque["name"] == attack){
+            //trouver coeff le plus haut
+            Pokemon.all_pokemons.forEach(pokemon =>{
+                if(pokemon.getVulnerability(attaque["type"]) > weakest_coeff){
+                    weakest_coeff = pokemon.getVulnerability(attaque["type"]);
+                }
+            });
+            
+            //ajouter pokemon au coeff le plus haut
+            Pokemon.all_pokemons.forEach(pokemon =>{
+                if(pokemon.getVulnerability(attaque["type"]) == weakest_coeff){
+                    weakest.push(pokemon);
+                }
+            });
+        }
+    }  
+    );
+    
+    return weakest;
+}
+
+function getStrongestEnnemy(attack){
+    let strongest = [];
+    let strongest_coeff = 100;
+
+    Attack.all_moves.forEach(attaque => {
+        if(attaque["name"] == attack){
+            //trouver le coeff le plus bas
+            Pokemon.all_pokemons.forEach(pokemon =>{
+                if(pokemon.getVulnerability(attaque["type"]) < strongest_coeff){
+                    strongest_coeff = pokemon.getVulnerability(attaque["type"]);
+                }
+            });
+            
+            //ajouter pokemon au coeff le plus bas
+            Pokemon.all_pokemons.forEach(pokemon =>{
+                if(pokemon.getVulnerability(attaque["type"]) == strongest_coeff){
+                    strongest.push(pokemon);
+                }
+            });
+        }
+    }
+    );
+    return strongest;
 }
 
 Pokemon.import_pokemon();
-console.log(getPokemonByType("Fire"));
+console.log(Pokemon.all_pokemons);

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pokemons</title>
+        <meta charset="utf-8">
+    </head>
+    
+    <body id="corps">
+        <h1>Les Pokémons</h1>
+
+        <script src="pokemon.js"></script>
+        <script src="pokemon_type.js"></script>
+        <script src="type_effectiveness.js"></script>
+        <script src="fast_moves.js"></script>
+        <script src="charged_moves.js"></script>
+        <script src="pokemon_moves.js"></script>
+        <script src="generation.js"></script>
+        <script src="script.js"></script>
+
+        
+
+        <script>
+
+            let number = 25;
+            let last_number = 1;
+            let page_number = 1;
+            let table;
+            let footer;
+            let body = document.getElementById("corps");
+            
+
+            function Page(){
+            button_Next.disabled = false;
+            button_Back.disabled = false;
+
+            if(last_number == 1){
+                button_Back.disabled = true;
+            }
+            
+            if(number >= Pokemon.all_pokemons.length){
+                button_Next.disabled = true;
+            }
+
+            let table_page = document.createElement("table");
+            
+            let header = document.createElement("thead");
+            let tab_body = document.createElement("tbody");
+            let footer_page = document.createElement("footer");
+           
+
+            let rowHeader = document.createElement("tr");
+            
+            let tdIdHeader = document.createElement("th");
+            tdIdHeader.textContent = "ID";
+            let tdNomHeader = document.createElement("th");
+            tdNomHeader.textContent = "Nom";
+            let tdGenHeader = document.createElement("th");
+            tdGenHeader.textContent = "Generation";
+            let tdEndHeader=document.createElement("th");
+            tdEndHeader.textContent = "Stamina";
+            let tdAtkHeader=document.createElement("th");
+            tdAtkHeader.textContent = "Attaque";
+            let tdDefHeader=document.createElement("th");
+            tdDefHeader.textContent = "Defense";
+            let tdImageHeader=document.createElement("th");
+            tdImageHeader.textContent = "Image";
+
+            rowHeader.appendChild(tdIdHeader); 
+            rowHeader.appendChild(tdNomHeader); 
+            rowHeader.appendChild(tdGenHeader);
+            rowHeader.appendChild(tdEndHeader);  
+            rowHeader.appendChild(tdAtkHeader); 
+            rowHeader.appendChild(tdDefHeader); 
+            rowHeader.appendChild(tdImageHeader); 
+            header.appendChild(rowHeader);
+            table_page.appendChild(header);
+
+            
+
+            for(let i = last_number; i <= number; i++){
+                if(Pokemon.all_pokemons[i] != undefined){
+                let row=document.createElement("tr");
+
+                let tdId=document.createElement("td");
+                tdId.textContent = Pokemon.all_pokemons[i]["id"];
+
+                let tdNom=document.createElement("td");
+                tdNom.textContent = Pokemon.all_pokemons[i]["pokemon_name"];
+
+                let tdGen=document.createElement("td");
+                tdGen.textContent = Pokemon.all_pokemons[i]["generation"];
+
+                let tdEnd=document.createElement("td");
+                tdEnd.textContent = Pokemon.all_pokemons[i]["base_stamina"];
+
+                let tdAtk=document.createElement("td");
+                tdAtk.textContent = Pokemon.all_pokemons[i]["base_attack"];
+
+                let tdDef=document.createElement("td");
+                tdDef.textContent = Pokemon.all_pokemons[i]["base_defense"];
+
+                let tdImage=document.createElement("td");
+                let image = document.createElement("img");
+
+                image.src = Pokemon.all_pokemons[i]["miniature"];
+
+                tdImage.appendChild(image);
+
+                row.appendChild(tdId); 
+                row.appendChild(tdNom); 
+                row.appendChild(tdGen);
+                row.appendChild(tdEnd);  
+                row.appendChild(tdAtk); 
+                row.appendChild(tdDef); 
+                row.appendChild(tdImage); 
+                tab_body.appendChild(row);
+                }else{
+                let row=document.createElement("tr");
+
+                let tdId=document.createElement("td");
+                tdId.textContent = "";
+
+                let tdNom=document.createElement("td");
+                tdNom.textContent = "";
+
+                let tdGen=document.createElement("td");
+                tdGen.textContent = "";
+
+                let tdEnd=document.createElement("td");
+                tdEnd.textContent = "";
+
+                let tdAtk=document.createElement("td");
+                tdAtk.textContent = "";
+
+                let tdDef=document.createElement("td");
+                tdDef.textContent = "";
+
+                let tdImage=document.createElement("td");
+                let image = document.createElement("img");
+
+                image.src = "";
+
+                tdImage.appendChild(image);
+
+                row.appendChild(tdId); 
+                row.appendChild(tdNom); 
+                row.appendChild(tdGen);
+                row.appendChild(tdEnd);  
+                row.appendChild(tdAtk); 
+                row.appendChild(tdDef); 
+                row.appendChild(tdImage); 
+                tab_body.appendChild(row); 
+                }
+            }
+            table_page.appendChild(tab_body);
+            body.appendChild(table_page);
+            footer_page.textContent = "Page " + page_number;
+            body.appendChild(footer_page);
+
+            table = table_page;
+            footer = footer_page
+            
+
+        }
+
+        let button_Next = document.createElement("button");
+        let button_Back = document.createElement("button");
+        button_Back.id="back";
+        button_Next.id="next";
+        button_Back.textContent = "Back";
+        button_Next.textContent = "Next";
+        body.appendChild(button_Back);
+        body.appendChild(button_Next);
+
+        document.getElementById('back').addEventListener('click',backPage, true);
+        
+        document.getElementById('next').addEventListener('click',nextPage, true);
+
+             
+        
+        function nextPage(){
+                number += 25;
+                last_number += 25;
+                page_number+=1
+                footer.remove();
+                table.remove();
+                Page();      
+            }
+
+            function backPage(){
+                number -= 25;
+                last_number -= 25;
+                page_number -= 1;
+                footer.remove();
+                table.remove();
+                Page();       
+            }
+
+        window.onload=Page();
+        
+        </script>
+
+    </body>
+</html>
+
+<style>
+    table,
+    td{
+        border: black solid 3px;
+    }
+
+</style>

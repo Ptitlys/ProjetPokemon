@@ -3,7 +3,7 @@
 // Pokemon that are from that generation. 
 // Each Pokemon entry has its name, Pokemon ID, and generation number.
 
-generation = {
+pokemon_generation = {
     "Generation 1": [
         {
             "generation_number": 1,
