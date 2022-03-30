@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pokemons</title>
+        <meta charset="utf-8">
+    </head>
+    
+    <body id="corps">
+        <h1>Les Pokémons</h1>
+
+        <script src="pokemon.js"></script>
+        <script src="pokemon_type.js"></script>
+        <script src="type_effectiveness.js"></script>
+        <script src="fast_moves.js"></script>
+        <script src="charged_moves.js"></script>
+        <script src="pokemon_moves.js"></script>
+        <script src="generation.js"></script>
+        <script src="script.js"></script>
+
+        
+
+        <script>
+            let number = 25;
+            let last_number = 1;
+            let page_number = 1;
+            let table;
+            let footer;
+            let row_pokemon;
+            let body = document.getElementById("corps");
+            let numero_pokemon;
+            let generation_filter = "none";
+            let type_filter = "";
+            let tableau_pokemon = Pokemon.all_pokemons;
+             
+            
+
+            function Page(generation_filter){
+            
+            button_Next.disabled = false;
+            button_Back.disabled = false;
+
+            //desactivation du bouton si on est a la fin ou au debut
+                if(page_number==1){
+                button_Back.disabled = true;
+                }
+
+                if(page_number >= tableau_pokemon.length/25){
+                    button_Next.disabled = true;
+                }
+            
+            //creation table
+            let table_page = document.createElement("table");
+            
+            // creation header tableau
+            let header = document.createElement("thead");
+            let tab_body = document.createElement("tbody");
+            let footer_page = document.createElement("footer");
+           
+
+            let rowHeader = document.createElement("tr");
+            
+            let tdIdHeader = document.createElement("th");
+            tdIdHeader.textContent = "ID";
+            let tdNomHeader = document.createElement("th");
+            tdNomHeader.textContent = "Nom";
+            let tdGenHeader = document.createElement("th");
+            tdGenHeader.textContent = "Generation";
+            let tdEndHeader=document.createElement("th");
+            tdEndHeader.textContent = "Stamina";
+            let tdAtkHeader=document.createElement("th");
+            tdAtkHeader.textContent = "Attaque";
+            let tdDefHeader=document.createElement("th");
+            tdDefHeader.textContent = "Defense";
+            let tdImageHeader=document.createElement("th");
+            tdImageHeader.textContent = "Image";
+
+            rowHeader.appendChild(tdIdHeader); 
+            rowHeader.appendChild(tdNomHeader); 
+            rowHeader.appendChild(tdGenHeader);
+            rowHeader.appendChild(tdEndHeader);  
+            rowHeader.appendChild(tdAtkHeader); 
+            rowHeader.appendChild(tdDefHeader); 
+            rowHeader.appendChild(tdImageHeader); 
+            header.appendChild(rowHeader);
+            table_page.appendChild(header);
+
+            //Afficher tableau
+            for(let i = last_number; i <= number; i++){
+                if(tableau_pokemon[i] != undefined){
+                //recuperation numero pokemon
+                let numero_pokemon = tableau_pokemon[i]["id"];
+
+                let row=document.createElement("tr");
+                
+                let tdId=document.createElement("td");
+                tdId.textContent = tableau_pokemon[i]["id"];
+
+                let tdNom=document.createElement("td");
+                tdNom.textContent = tableau_pokemon[i]["pokemon_name"];
+
+                let tdGen=document.createElement("td");
+                tdGen.textContent = tableau_pokemon[i]["generation"];
+
+                let tdEnd=document.createElement("td");
+                tdEnd.textContent = tableau_pokemon[i]["base_stamina"];
+
+                let tdAtk=document.createElement("td");
+                tdAtk.textContent = tableau_pokemon[i]["base_attack"];
+
+                let tdDef=document.createElement("td");
+                tdDef.textContent = tableau_pokemon[i]["base_defense"];
+
+                let tdImage=document.createElement("td");
+                let image = document.createElement("img");
+
+                image.src = tableau_pokemon[i]["miniature"];
+
+                tdImage.appendChild(image);
+
+                row.appendChild(tdId); 
+                row.appendChild(tdNom); 
+                row.appendChild(tdGen);
+                row.appendChild(tdEnd);  
+                row.appendChild(tdAtk); 
+                row.appendChild(tdDef); 
+                row.appendChild(tdImage); 
+                tab_body.appendChild(row);
+
+                let menu = document.createElement("ul");
+                menu.style="display: none;";
+
+                let option = document.createElement("li");
+                option.textContent = "Détails";
+                option.style = "list-style-type:none; font-size:1.2em; text-align:center;";
+
+                menu.appendChild(option);
+                row.appendChild(menu);
+
+                //affichage menu survol
+                row.addEventListener('mouseover',function(){show_menu(menu);}, true);
+                row.addEventListener('mouseout',function(){hide_menu(menu);}, true);
+
+                //affichage detail et image quand click
+                tdImage.addEventListener('click',function(){show_image(numero_pokemon);},true);
+                menu.addEventListener('click',function(){detail(numero_pokemon);},true);
+                }else{
+                    
+                }
+                
+                }
+                
+            table_page.appendChild(tab_body);
+            footer_page.textContent = "Page " + page_number;
+
+            body.appendChild(liste);
+            body.appendChild(footer_page);
+            body.appendChild(table_page);
+            
+
+            table = table_page;
+            footer = footer_page; 
+
+            //Montrer pokemon en grande image
+            function show_image(numero_pokemon){
+                //affichage image pokemon
+                let div_image = document.createElement("div");
+                div_image.style="position:sticky; float:top; bottom:20%; left:50%; width:30%; z-index:3;"
+                tableau_pokemon.forEach(pokemon => {
+                if(pokemon["id"] == numero_pokemon){
+                let image_pokemon = document.createElement("img");
+                image_pokemon.src = pokemon["image"];
+
+                let button_close = document.createElement("button");
+                button_close.textContent = "Close";
+                button_close.style = "position:absolute; right:10px; top:10px";
+                button_close.addEventListener('click',function(){div_image.remove();}, true);
+                button_Next.addEventListener('click',function(){div_image.remove();}, true);
+                button_Back.addEventListener('click',function(){div_image.remove();}, true);
+                body.addEventListener('click',function(){div_image.remove();}, true);
+
+                div_image.appendChild(image_pokemon);
+                div_image.appendChild(button_close);
+                body.appendChild(div_image);
+                }
+            });
+            }
+            
+            
+            //afficher menu
+            function show_menu(menu){
+            menu.style = "display:block; position:absolute; left:5%; background-color:grey; padding:0; width:300px; height:30px"
+            }
+
+            //cacher menu
+            function hide_menu(menu){
+            menu.style = "display:none; position:absolute; left:10%; background-color:grey; padding:0";
+            }
+        }
+
+        function detail(numero_pokemon){
+                //creation du popup
+                let popup = document.createElement("div");
+                popup.style="position:sticky; float:top; bottom:20%; left:50%; width:60%; height:100%; background-color:#EDE7D9; z-index:3;";
+
+            tableau_pokemon.forEach(pokemon => {
+                if(pokemon["id"] == numero_pokemon){
+                //affichage nom pokemon
+                let titre = document.createElement("h1");
+                titre.textContent = pokemon["pokemon_name"];
+
+                //affichage image pokemon
+                let image_pokemon = document.createElement("img");
+                image_pokemon.src = pokemon["image"];
+                image_pokemon.style = "width:30%";
+
+                //affichage images types
+                let image_type1 = document.createElement("img");
+                let image_type2 = document.createElement("img");
+
+                image_type1.src = pokemon["type1_image"];
+                if(pokemon["type2_image"] != ""){
+                    image_type2.src = pokemon["type2_image"];
+                }
+                
+                //afficher les attaques chargées
+                let charged_attaque = document.createElement("ul");
+                if(pokemon["move_set"]["charged_moves"].length != 0){
+                charged_attaque.textContent = "Attaques chargées";
+                for(let i = 0; i < pokemon["move_set"]["charged_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = pokemon["move_set"]["charged_moves"][i]["name"];
+                    charged_attaque.appendChild(attaque);
+                }
+                }
+
+                let elite_charged_attaque = document.createElement("ul");
+                //afficher les attaques chargées élites
+                if(pokemon["move_set"]["elite_charged_moves"].length != 0){
+                elite_charged_attaque.textContent = "Attaques chargées élites";
+                for(let i = 0; i < pokemon["move_set"]["elite_charged_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = pokemon["move_set"]["elite_charged_moves"][i]["name"];
+                    elite_charged_attaque.appendChild(attaque);
+                }
+                }
+
+                let elite_fast_attaque = document.createElement("ul");
+                if(pokemon["move_set"]["elite_fast_moves"].length != 0){
+                //afficher les attaques rapides élites
+                elite_fast_attaque.textContent = "Attaques rapides élites";
+                for(let i = 0; i < pokemon["move_set"]["elite_fast_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = pokemon["move_set"]["elite_fast_moves"][i]["name"];
+                    elite_fast_attaque.appendChild(attaque);
+                }
+                }
+
+                let fast_attaque = document.createElement("ul");
+                if(pokemon["move_set"]["elite_fast_moves"].length != 0){
+                //afficher les attaques rapides
+                fast_attaque.textContent = "Attaques rapides";
+                for(let i = 0; i < pokemon["move_set"]["fast_moves"].length; i++){
+                    let attaque = document.createElement("li");
+                    attaque.textContent = pokemon["move_set"]["fast_moves"][i]["name"];
+                    fast_attaque.appendChild(attaque);
+                }
+                }
+
+                //button pour fermer le popup
+                let button_close = document.createElement("button");
+                button_close.textContent = "Close";
+                button_close.style = "position:absolute; right:10px; top:10px";
+                button_close.addEventListener('click',function(){popup.remove();}, true);
+                button_Next.addEventListener('click',function(){popup.remove();}, true);
+                button_Back.addEventListener('click',function(){popup.remove();}, true);
+                body.addEventListener("click",function(){popup.remove();}, true);
+
+                popup.appendChild(titre);
+                popup.appendChild(image_type1);
+
+                if(pokemon["type2_image"] != ""){
+                    popup.appendChild(image_type2);
+                };
+
+                
+                popup.appendChild(fast_attaque);
+                popup.appendChild(elite_charged_attaque);
+                popup.appendChild(elite_fast_attaque);
+                popup.appendChild(charged_attaque);
+                popup.appendChild(image_pokemon);
+                popup.appendChild(button_close);
+                body.appendChild(popup);
+                popup_detail = popup;
+                }
+            });
+            
+            }
+                
+        
+        //creation filtre generation
+        var liste = document.createElement("select");
+        var option = document.createElement("option");
+        option.textContent = "no filter";
+        var attribut = document.createAttribute("value");
+        attribut.value = "no_filter";
+        option.setAttributeNode(attribut);
+        liste.appendChild(option);
+        option.addEventListener('click',function(){generation_filter = "none";filtrer(type_filter,generation_filter);}, true);
+
+        Object.keys(pokemon_generation).forEach(element => {
+            var option = document.createElement("option");
+
+            option.textContent = element;
+            var attribut = document.createAttribute("value");
+
+            attribut.value = element;
+                
+            option.setAttributeNode(attribut);
+            liste.appendChild(option);
+            option.addEventListener('click',function(){generation_filter = element.split(" ")[1];filtrer(type_filter,generation_filter);},true);
+        });
+       
+        //creation recherche par type
+        var input = document.createElement('input');
+        input.type = 'search';
+        input.placeholder = "Type";
+        body.appendChild(input);
+        input.addEventListener("keyup",function(){type_filter = input.value.charAt(0).toUpperCase()+input.value.substring(1,input.value.length);filtrer(type_filter,generation_filter);},true);
+
+        //function qui ressort page avec le tableau des pokemons selon les critères
+        function filtrer(type_filter, generation_filter){
+            //reset page
+            number = 25;
+            let passage = 0;
+            last_number = 1;
+            page_number = 1;
+            tableau_pokemon = [];
+            table.remove();
+            footer.remove();
+
+            //si filtre sur generation et sur type
+            if(generation_filter != "none" && type_filter != ""){
+                console.log("the two");
+                Pokemon.all_pokemons.forEach(pokemon => {
+                //verifier si le type 2 du pokemon est defini
+                if(pokemon["type2"] != ""){
+                //si le filtre de type est contenu dans type 1 ou type 2 et le filtre generation correspond a la generation du pokemon
+                if((pokemon["type1"]["type"].includes(type_filter) == true || pokemon["type2"]["type"].includes(type_filter) == true) && pokemon["generation"] == generation_filter){
+                    console.log("ahahah");
+                    tableau_pokemon.push(pokemon);
+                }
+                }else{
+                //si le filtre de type est contenu dans type 1 
+                if(pokemon["type1"]["type"].includes(type_filter) && pokemon["generation"] == generation_filter){
+                    tableau_pokemon.push(pokemon);
+                }
+                }
+                });
+
+            //si filtre seulement sur type
+            }else if(generation_filter == "none"){
+                console.log("only type");
+                Pokemon.all_pokemons.forEach(pokemon => {
+                //verifier si le type 2 du pokemon est defini
+                if(pokemon["type2"] != ""){
+                //si le filtre de type est contenu dans type 1 ou type 2 
+                if(pokemon["type1"]["type"].includes(type_filter) || pokemon["type2"]["type"].includes(type_filter)){
+                    tableau_pokemon.push(pokemon);
+                }
+                }else{
+                //si le filtre de type est contenu dans type 1 
+                if(pokemon["type1"]["type"].includes(type_filter)){
+                    tableau_pokemon.push(pokemon);
+                }
+                }
+                });
+
+            //si filtre sur generation
+            }else if(type_filter == ""){
+                console.log("only generation");
+                //le filtre generation correspond a la generation du pokemon
+                Pokemon.all_pokemons.forEach(pokemon => {
+                if(pokemon["generation"] == generation_filter){
+                    tableau_pokemon.push(pokemon);
+                }
+                });
+            }
+
+            Page(tableau_pokemon);
+        }
+        
+        //definition bouton next et back
+        let button_Next = document.createElement("button");
+        let button_Back = document.createElement("button");
+        button_Back.id="back";
+        button_Next.id="next";
+        button_Back.textContent = "Back";
+        button_Next.textContent = "Next";
+        body.appendChild(button_Back);
+        body.appendChild(button_Next);
+
+        document.getElementById('back').addEventListener('click',backPage, true);
+        document.getElementById('next').addEventListener('click',nextPage, true);
+        
+        //quand on clique sur next
+        function nextPage(){
+            //mise a jour valeurs
+            number += 25;
+            last_number += 25;
+            page_number+=1;
+
+            //reset numero de page
+            footer.remove();
+
+            //reset table
+            table.remove();
+
+            Page(tableau_pokemon);      
+        }
+
+        //quand on clique sur back
+        function backPage(){
+            //mise a jour valeurs
+            number -= 25;
+            last_number -= 25;
+            page_number -= 1;
+
+            //reset numero de page
+            footer.remove();
+
+            //reset table
+            table.remove();
+
+            //affichage tableau
+            Page(tableau_pokemon);       
+            }
+        
+        //charger le tableau au 1er chargement de page
+        window.onload=Page(tableau_pokemon);
+        </script>
+
+    </body>
+</html>
+
+<style>
+    table,
+    td{
+        border: black solid 2px;
+    }
+
+</style>

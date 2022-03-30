@@ -386,4 +386,4 @@ function getStrongestEnnemy(attack){
 }
 
 Pokemon.import_pokemon();
-console.log(Pokemon.all_pokemons);
+//console.log(Pokemon.all_pokemons);
