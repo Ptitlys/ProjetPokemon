@@ -43,7 +43,7 @@
                 if(page_number==1){
                 button_Back.disabled = true;
                 }
-                
+                console.log(Math.round( tableau_pokemon.length/25 * 10)/10);
                 if(page_number >= Math.round( tableau_pokemon.length/25 * 10)/10){
                     button_Next.disabled = true;
                 }
@@ -84,6 +84,7 @@
             header.appendChild(rowHeader);
             table_page.appendChild(header);
 
+            
             //Afficher tableau
             for(let i = last_number; i <= number; i++){
                 if(tableau_pokemon[i] != undefined){
@@ -296,7 +297,6 @@
             
             }
                 
-        
         //creation filtre generation
         var liste = document.createElement("select");
         var option = document.createElement("option");
