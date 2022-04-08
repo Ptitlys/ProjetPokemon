@@ -317,22 +317,111 @@ function SortByStamina(x, y){
     if (x.base_stamina < y.base_stamina) {return  1;}
     return 0;
 }
+function SortById(x, y){
+    if(x.id > y.id) {return -1;}
+    if(x.id < y.id) {return 1;}
+}
 function SortByName(x, y) {
     if (x.pokemon_name < y.pokemon_name) { return -1; }
     if (x.pokemon_name > y.pokemon_name) { return 1; }
     return 0;
 }
+function SortByGeneration(x, y){
+    if (x.generation > y.generation) {return -1;}
+    if (x.generation < y.generation) {return 1;}
+}
+function SortByAttaque(x, y){
+    if (x.base_attack > y.base_attack) {return -1;}
+    if (x.base_attack < y.base_attack) {return 1;}
+}
+function SortByDefense(x, y){
+    if (x.base_defense > y.base_defense) {return -1;}
+    if (x.base_defense < y.base_defense) {return 1;}
+}
 //On crée les fonctions qui vont trier
-function sortPokemonByStamina(){
-    var s = Pokemon.all_pokemons.sort(SortByStamina);
-    console.log(s);
+function sortPokemonByStamina(tab){
+    var tableauTrie = tab.sort(SortByStamina);
+    return tableauTrie;
 }
-
-function sortPokemonByName() {
-    var s = Pokemon.all_pokemons.sort(SortByName);
-    console.log(s);
+function sortPokemonById(tab){
+    var tableauTrie = tab.sort(SortById);
+    return tableauTrie;
 }
+function sortPokemonByName(tab){
+    var tableauTrie = tab.sort(SortByName);
+    return tableauTrie;
+}
+function sortPokemonByGeneration(tab){
+    let tab_temp = {"1":[],"2":[],"3":[],"4":[],"5":[],"6":[],"7":[],"8":[],"":[]};
+    var tableauTrie = tab
+    let tab_temp_final = [];
 
+    tableauTrie.forEach(pokemon => {
+        if(pokemon != undefined){
+            switch(pokemon["generation"]){
+                case 1:
+                    tab_temp["1"].push(pokemon);
+                break;
+                case 2:
+                    tab_temp["2"].push(pokemon);
+                    break;
+                case 3:
+                    tab_temp["3"].push(pokemon);
+                    break;    
+                case 4:
+                    tab_temp["4"].push(pokemon);
+                    break;    
+                case 5:
+                    tab_temp["5"].push(pokemon); 
+                    break;   
+                case 6:
+                    tab_temp["6"].push(pokemon);
+                    break;    
+                case 7:
+                    tab_temp["7"].push(pokemon);
+                    break;    
+                case 8:
+                    tab_temp["8"].push(pokemon); 
+                    break;   
+                default:
+                    tab_temp[""].push(pokemon); 
+                    break;   
+                } 
+            }
+    });
+    
+    let x = 8;
+    Object.keys(tab_temp).forEach(tab_generation => {
+        let indice = String(x);
+        
+        if(indice == 0){
+            tab_temp_final.push(sortPokemonByName(tab_temp[""]));
+        }else{
+            tab_temp_final.push(sortPokemonByName(tab_temp[indice]));
+        }
+        
+        x--;
+        
+    });
+    
+    tableauTrie = [];
+    Object.keys(tab_temp_final).forEach(generation =>{
+        tab_temp_final[generation].forEach(pokemon => {
+            tableauTrie.push(pokemon);
+        })
+    });
+
+        return tableauTrie;
+    }
+
+function sortPokemonByAttaque(tab){
+    var tableauTrie = tab.sort(SortByAttaque);
+    return tableauTrie;
+}
+function sortPokemonByDefense(tab){
+    var tableauTrie = tab.sort(SortByDefense);
+    return tableauTrie;
+}
 function getWeakestEnnemy(attack){
     let weakest = [];
     let weakest_coeff = 0;

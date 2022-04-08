@@ -20,7 +20,7 @@
         
 
         <script>
-            let number = 25;
+           let number = 25;
             let last_number = 1;
             let page_number = 1;
             let table;
@@ -31,23 +31,31 @@
             let generation_filter = "none";
             let type_filter = "";
             let tableau_pokemon = Pokemon.all_pokemons;
+            let col_tri = "tdIdHeader";
+
+            let tdIdHeader = document.createElement("th");
+            tdIdHeader.textContent = "ID";
+            
+            let tdNomHeader = document.createElement("th");
+            tdNomHeader.textContent = "Nom";
+          
+            let tdGenHeader = document.createElement("th");
+            tdGenHeader.textContent = "Generation";
+          
+            let tdEndHeader=document.createElement("th");
+            tdEndHeader.textContent = "Stamina";
+           
+            let tdAtkHeader=document.createElement("th");
+            tdAtkHeader.textContent = "Attaque";
+         
+            let tdDefHeader=document.createElement("th");
+            tdDefHeader.textContent = "Defense";
+
+            let tdImageHeader=document.createElement("th");
+            tdImageHeader.textContent = "Image";
              
-            
-
-            function Page(generation_filter){
-            
-            button_Next.disabled = false;
-            button_Back.disabled = false;
-
-            //desactivation du bouton si on est a la fin ou au debut
-                if(page_number==1){
-                button_Back.disabled = true;
-                }
-                console.log(Math.round( tableau_pokemon.length/25 * 10)/10);
-                if(page_number >= Math.round( tableau_pokemon.length/25 * 10)/10){
-                    button_Next.disabled = true;
-                }
-            
+            function Page(tableau_pokemon){ 
+        
             //creation table
             let table_page = document.createElement("table");
             
@@ -56,24 +64,32 @@
             let tab_body = document.createElement("tbody");
             let footer_page = document.createElement("footer");
            
-
             let rowHeader = document.createElement("tr");
             
-            let tdIdHeader = document.createElement("th");
-            tdIdHeader.textContent = "ID";
-            let tdNomHeader = document.createElement("th");
-            tdNomHeader.textContent = "Nom";
-            let tdGenHeader = document.createElement("th");
-            tdGenHeader.textContent = "Generation";
-            let tdEndHeader=document.createElement("th");
-            tdEndHeader.textContent = "Stamina";
-            let tdAtkHeader=document.createElement("th");
-            tdAtkHeader.textContent = "Attaque";
-            let tdDefHeader=document.createElement("th");
-            tdDefHeader.textContent = "Defense";
-            let tdImageHeader=document.createElement("th");
-            tdImageHeader.textContent = "Image";
+            button_Next.disabled = false;
+            button_Back.disabled = false;
 
+            //desactivation du bouton si on est a la fin ou au debut
+                if(page_number==1){
+                button_Back.disabled = true;
+                }
+            
+                if(page_number >= Math.round( tableau_pokemon.length/25 * 10)/10){
+                    button_Next.disabled = true;
+                }
+            
+            
+
+            //evenement click sur les entete
+            tdIdHeader.addEventListener("click",function(){trier("id");},true);
+            tdNomHeader.addEventListener("click",function(){trier("nom");},true);
+            tdGenHeader.addEventListener("click",function(){trier("generation");},true);
+            tdEndHeader.addEventListener("click",function(){trier("stamina");},true);
+            tdAtkHeader.addEventListener("click",function(){trier("attaque");},true);
+            tdDefHeader.addEventListener("click",function(){trier("defense");},true);
+            
+
+            //ajout header dans tableau
             rowHeader.appendChild(tdIdHeader); 
             rowHeader.appendChild(tdNomHeader); 
             rowHeader.appendChild(tdGenHeader);
@@ -294,8 +310,10 @@
                 popup_detail = popup;
                 }
             });
+        }
             
-            }
+            
+            
                 
         //creation filtre generation
         var liste = document.createElement("select");
@@ -436,9 +454,79 @@
             //affichage tableau
             Page(tableau_pokemon);       
             }
+
+
+         //trier selon colonne selectionnee
+         function trier(critere){
+            console.log("prout");
+            //reset page
+            number = 25;
+            let passage = 0;
+            last_number = 1;
+            page_number = 1;
+            let tableauTrie;
+            table.remove();
+            footer.remove();
+            
+            switch(critere){
+                
+                case "stamina":
+                    tableauTrie = sortPokemonByStamina(tableau_pokemon);
+                    break;
+                case "id":
+                    tableauTrie = sortPokemonById(tableau_pokemon);
+                    break;
+                case "nom":
+                    tableauTrie = sortPokemonByName(tableau_pokemon);
+                    break;
+                case "generation":
+                    tableauTrie = sortPokemonByGeneration(tableau_pokemon);
+                    break;
+                case "attaque":
+                    tableauTrie = sortPokemonByAttaque(tableau_pokemon);
+                    break;
+                case "defense":
+                    tableauTrie = sortPokemonByDefense(tableau_pokemon);
+                    break;
+                }
+            
+           
+                Page(tableauTrie);
+                tdEndHeader.style="font-weight:normal";
+                tdIdHeader.style="font-weight:normal";
+                tdNomHeader.style="font-weight:normal";
+                tdGenHeader.style="font-weight:normal";
+                tdAtkHeader.style="font-weight:normal";
+                tdDefHeader.style="font-weight:normal";
+                switch(critere){
+                case "stamina":
+                    tdEndHeader.style = "font-weight:bold;";
+                    break;
+                case "id":
+                    tdIdHeader.style = "font-weight:bold;";
+                    break;
+                case "nom":
+                    tdNomHeader.style = "font-weight:bold;";
+                    break;
+                case "generation":
+                    tdGenHeader.style = "font-weight:bold;";
+                    break;
+                case "attaque":
+                    tdAtkHeader.style = "font-weight:bold;";
+                    break;
+                case "defense":
+                    tdDefHeader.style = "font-weight:bold;";
+                    break;
+                }
+               
+
+            }
+
+
         
+
         //charger le tableau au 1er chargement de page
-        window.onload=Page(tableau_pokemon);
+        window.onload = Page(tableau_pokemon);
         </script>
 
     </body>

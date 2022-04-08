@@ -20,16 +20,22 @@
         
 
         <script>
+            //nombre de pokemon par page
             let number = 25;
+            //premier_pokemon de la page
             let last_number = 1;
+            //nombre de page
             let page_number = 1;
             let table;
             let footer;
             let row_pokemon;
             let body = document.getElementById("corps");
             let numero_pokemon;
+            //filtre génération
             let generation_filter = "none";
+            //filtre type
             let type_filter = "";
+            //initialisation tableau_pokemon
             let tableau_pokemon = Pokemon.all_pokemons;
              
             
@@ -56,9 +62,10 @@
             let tab_body = document.createElement("tbody");
             let footer_page = document.createElement("footer");
            
-
+            //creation ligne header
             let rowHeader = document.createElement("tr");
             
+            //creation header colonne
             let tdIdHeader = document.createElement("th");
             tdIdHeader.textContent = "ID";
             let tdNomHeader = document.createElement("th");
@@ -74,6 +81,7 @@
             let tdImageHeader=document.createElement("th");
             tdImageHeader.textContent = "Image";
 
+            //ajout des colonnes de header dans la ligne header
             rowHeader.appendChild(tdIdHeader); 
             rowHeader.appendChild(tdNomHeader); 
             rowHeader.appendChild(tdGenHeader);
@@ -82,6 +90,8 @@
             rowHeader.appendChild(tdDefHeader); 
             rowHeader.appendChild(tdImageHeader); 
             header.appendChild(rowHeader);
+
+            //ajout de l'header dans le tableau
             table_page.appendChild(header);
 
             //Afficher tableau
@@ -91,32 +101,24 @@
                 let numero_pokemon = tableau_pokemon[i]["id"];
 
                 let row=document.createElement("tr");
-                
+
                 let tdId=document.createElement("td");
                 tdId.textContent = tableau_pokemon[i]["id"];
-
                 let tdNom=document.createElement("td");
                 tdNom.textContent = tableau_pokemon[i]["pokemon_name"];
-
                 let tdGen=document.createElement("td");
                 tdGen.textContent = tableau_pokemon[i]["generation"];
-
                 let tdEnd=document.createElement("td");
                 tdEnd.textContent = tableau_pokemon[i]["base_stamina"];
-
                 let tdAtk=document.createElement("td");
                 tdAtk.textContent = tableau_pokemon[i]["base_attack"];
-
                 let tdDef=document.createElement("td");
                 tdDef.textContent = tableau_pokemon[i]["base_defense"];
-
                 let tdImage=document.createElement("td");
                 let image = document.createElement("img");
-
                 image.src = tableau_pokemon[i]["miniature"];
 
                 tdImage.appendChild(image);
-
                 row.appendChild(tdId); 
                 row.appendChild(tdNom); 
                 row.appendChild(tdGen);
@@ -126,13 +128,14 @@
                 row.appendChild(tdImage); 
                 tab_body.appendChild(row);
 
+                //creation menu survol
                 let menu = document.createElement("ul");
                 menu.style="display: none;";
-
                 let option = document.createElement("li");
                 option.textContent = "Détails";
                 option.style = "list-style-type:none; font-size:1.2em; text-align:center;";
 
+                //ajout menu survol dans page
                 menu.appendChild(option);
                 row.appendChild(menu);
 
@@ -143,8 +146,6 @@
                 //affichage detail et image quand click
                 tdImage.addEventListener('click',function(){show_image(numero_pokemon);},true);
                 menu.addEventListener('click',function(){detail(numero_pokemon);},true);
-                }else{
-                    
                 }
                 
                 }
